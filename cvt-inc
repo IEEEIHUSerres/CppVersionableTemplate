@@ -1,0 +1,29 @@
+#!/bin/bash
+
+OPTION=$1
+
+case $OPTION in
+  version)
+    VERSION_PREFIX="#define VERSION_MAJOR"
+    ;;
+  build)
+    VERSION_PREFIX="#define VERSION_BUILD"
+    ;;
+  *)
+    VERSION_PREFIX="#define VERSION_BUILD"
+    ;;
+esac
+
+CONFIG_CPP_FILE=./src/resources/Config.cpp
+
+OLD_VERSION=$(grep "^""${VERSION_PREFIX}" ${CONFIG_CPP_FILE})
+OLD_VERSION=${OLD_VERSION/#$VERSION_PREFIX}
+
+NEW_VERSION=$((OLD_VERSION + 1))
+
+SED_ORIGIN="/${VERSION_PREFIX}/c"
+SED_NEW="\\${VERSION_PREFIX} ${NEW_VERSION}"
+
+echo $NEW_VERSION
+
+sed -i "$SED_ORIGIN""$SED_NEW" ${CONFIG_CPP_FILE}
